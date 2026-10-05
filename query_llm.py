@@ -1,14 +1,14 @@
 import sys, torch
 from ddp_worker import GPT, vocab_size, id_to_vocab, vocab_to_id, bpe_ranks
-import tokenizer
+from active_scripts import tokenizer
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 model = GPT(vocab_size=vocab_size, max_seq_len=1024, d_model=1024, heads=16, num_layers=16)
 model.load_state_dict(torch.load("gpt300m_bf16.pt", map_location="cpu"))
 model = model.to(device).eval()
-
+print("saved; params:", sum(p.numel() for p in model.parameters()) / 1e6, "M")
 @torch.no_grad()
-def generate(prompt, max_new_tokens=100, temperature=0.8, top_k=50, top_p=0.9, rep_penalty=1.1):
+def generate(prompt, max_new_tokens=100, temperature=0.5, top_k=20, top_p=0.7, rep_penalty=1.1):
     ids = tokenizer.encode(prompt, vocab_to_id, bpe_ranks)
     x = torch.tensor([ids], dtype=torch.long, device=device)
     for _ in range(max_new_tokens):
