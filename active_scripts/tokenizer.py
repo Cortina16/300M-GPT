@@ -367,7 +367,7 @@ def load_tokenizer(path):
 # vocab_to_id, id_to_vocab, bpe_ranks = train_bpe_fast("output.txt", target_vocab_size=128000, num_workers=64)
 # save_vocab_dict(vocab_to_id,  bpe_ranks, "vocab_id.vocab")
 # save_tokenizer(vocab_to_id, bpe_ranks, "vocab_id_other.vocab")
-vocab_to_id, id_to_vocab, bpe_ranks = read_vocab_dict("../vocab_id.vocab")
+vocab_to_id, id_to_vocab, bpe_ranks = read_vocab_dict("vocab_id.vocab")
 
 # test_text = "The Empire will defend the war!"
 # encoded_ids = encode(test_text, vocab_to_id, bpe_ranks)

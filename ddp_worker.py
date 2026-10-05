@@ -9,10 +9,10 @@ import torch.distributed as dist
 import numpy as np
 import os
 import time
-import active_scripts.tokenizer
+from active_scripts import tokenizer
 from contextlib import nullcontext
 
-vocab_to_id, id_to_vocab, bpe_ranks = tokenizer.read_vocab_dict("./training_utils/vocab_id.vocab")
+vocab_to_id, id_to_vocab, bpe_ranks = tokenizer.read_vocab_dict("./vocab_id.vocab")
 vocab_size = max(id_to_vocab.keys()) + 1
 
 class MemMapDataset(Dataset):

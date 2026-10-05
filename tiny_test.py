@@ -11,7 +11,7 @@ device = "cuda"
 SEQ = 512
 BS = 12
 
-ds = MemMapDataset("../dataset.bin", seq_len=SEQ)
+ds = MemMapDataset("./training_utils/dataset.bin", seq_len=SEQ)
 dl = DataLoader(ds, batch_size=BS, shuffle=True, num_workers=2, drop_last=True)
 
 model = GPT(vocab_size=vocab_size, d_model=512, max_seq_len=SEQ, heads=8, num_layers=4).to(device)
@@ -22,13 +22,13 @@ def run(x, y):
         logits = model(x)
         return loss_fn(logits.view(-1, vocab_size).float(), y.view(-1))
 
-# ---- 1. initial loss: should be ~ln(vocab) ----
+#initial loss should be ~ln(vocab)
 x, y = next(iter(dl))
 x, y = x.to(device), y.to(device)
 with torch.no_grad():
     print(f"init loss {run(x, y).item():.3f}   (expect ~{math.log(vocab_size):.2f})")
 
-# ---- 2. overfit one batch: should go to ~0 ----
+# overfit one batch should go to ~0
 opt = torch.optim.AdamW(model.parameters(), lr=1e-3, betas=(0.9, 0.95), weight_decay=0.0)
 for i in range(200):
     loss = run(x, y)
@@ -38,7 +38,7 @@ for i in range(200):
     if i % 25 == 0:
         print(f"overfit step {i}: {loss.item():.4f}")
 
-# ---- 3. short real run from fresh weights ----
+#  short real run from fresh weights
 model = GPT(vocab_size=vocab_size, d_model=512, max_seq_len=SEQ, heads=8, num_layers=4).to(device)
 decay = [p for p in model.parameters() if p.ndim >= 2]
 no_decay = [p for p in model.parameters() if p.ndim < 2]
